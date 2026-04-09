@@ -1,7 +1,6 @@
 {
-  "rootDirectory": "artifacts/quran-app",
-  "buildCommand": "pnpm run build",
-  "outputDirectory": "dist/public",
+  "buildCommand": "pnpm --filter @workspace/quran-app run build",
+  "outputDirectory": "artifacts/quran-app/dist/public",
   "installCommand": "pnpm install --frozen-lockfile",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
