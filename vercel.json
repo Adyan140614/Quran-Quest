@@ -1,8 +1,8 @@
 {
   "rootDirectory": "artifacts/quran-app",
-  "buildCommand": "npm run build",
+  "buildCommand": "pnpm run build",
   "outputDirectory": "dist/public",
-  "installCommand": "npm install --legacy-peer-deps",
+  "installCommand": "pnpm install --frozen-lockfile",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]

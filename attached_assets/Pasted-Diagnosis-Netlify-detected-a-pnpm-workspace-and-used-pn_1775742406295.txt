@@ -1,0 +1,42 @@
+Diagnosis
+
+Netlify detected a pnpm workspace and used pnpm for installs despite your build command using npm (line 19–line 21, line 10).
+The install fails because pnpm is running in CI with frozen-lockfile=true and the committed pnpm-lock.yaml is out of sync with package.json. The error is reported here: line 22.
+The log also lists the specific mismatches and removed dependency that make the lockfile stale (line 25–line 42).
+Final failure: pnpm could not install dependencies because of the outdated lockfile (line 43–line 44).
+Root cause: The repository’s pnpm-lock.yaml does not match the dependency specifiers in package.json (or workspace package.json files). Netlify’s CI runs pnpm with a frozen lockfile by default, so it refuses to proceed.
+
+Solution
+
+Preferred fix (recommended): Update and commit a matching pnpm-lock.yaml
+
+On your development machine, ensure pnpm is available (Corepack is already used on Netlify; locally you can run via Corepack or install pnpm).
+From the repo root run:
+# ensure the pnpm version you use is recent
+corepack enable
+corepack prepare pnpm@latest --activate
+
+# install / update the lockfile to match package.json
+pnpm install
+Commit and push the updated pnpm-lock.yaml (and package.json if it changed):
+git add pnpm-lock.yaml package.json
+git commit -m "Update pnpm-lock.yaml to match package.json"
+git push
+This will make the lockfile and manifest consistent so Netlify’s frozen-lockfile CI policy will succeed.
+
+Alternative quick fixes (if you cannot update & commit the lockfile):
+
+Allow pnpm to ignore the frozen-lockfile in Netlify by setting PNPM_FLAGS:
+In Netlify UI → Site settings → Build & deploy → Environment → Add variable:
+Key: PNPM_FLAGS
+Value: --no-frozen-lockfile
+Or change your build command to run pnpm explicitly with that flag:
+pnpm install --no-frozen-lockfile && npm run build
+Note: before changing to rely on this, verify that the packages listed in your package.json are correct and committed; allowing installs to proceed with a mismatched lockfile may result in different dependency resolution between environments.
+
+If you intended to use npm (not pnpm), remove pnpm-lock.yaml from the repo so Netlify won’t auto-select pnpm. But this is a heavier change — better to keep pnpm-lock.yaml in sync.
+Extra verification step (recommended): Confirm the dependency specifiers are present in package.json/workspace manifests (especially the packages listed in the mismatch: @tailwindcss/vite, react, react-dom, vite, tailwindcss, etc.). If you changed package.json locally, make sure those changes were committed before updating the lockfile.
+
+Why this addresses the logs
+
+pnpm reported frozen-lockfile and mismatched specifiers (line 22 and line 25–line 42), so updating the lockfile to reflect package.json (and committing it) directly resolves the reported install error and allows Netlify to install dependencies successfully.

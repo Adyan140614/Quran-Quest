@@ -1,6 +1,6 @@
 [build]
   base = "artifacts/quran-app"
-  command = "npm install --legacy-peer-deps && npm run build"
+  command = "pnpm run build"
   publish = "dist/public"
 
 [build.environment]
