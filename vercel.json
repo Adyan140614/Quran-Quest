@@ -1,7 +1,8 @@
 {
-  "buildCommand": "pnpm --filter @workspace/quran-app run build",
-  "outputDirectory": "artifacts/quran-app/dist/public",
-  "installCommand": "pnpm install",
+  "rootDirectory": "artifacts/quran-app",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/public",
+  "installCommand": "npm install --legacy-peer-deps",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]

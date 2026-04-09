@@ -1,6 +1,10 @@
 [build]
-  command = "npm install -g pnpm && pnpm install && pnpm --filter @workspace/quran-app run build"
-  publish = "artifacts/quran-app/dist/public"
+  base = "artifacts/quran-app"
+  command = "npm install --legacy-peer-deps && npm run build"
+  publish = "dist/public"
+
+[build.environment]
+  NODE_VERSION = "20"
 
 [[redirects]]
   from = "/*"
